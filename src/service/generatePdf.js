@@ -38,28 +38,6 @@ class PDF_Generator {
     const pdfClear = pdfText.replace(/\n/g, " ");
     return pdfClear;
   }
-
-  async generateNewPdf(text) {
-    try {
-      const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage();
-      const { width, height } = page.getSize();
-      const font = await pdfDoc.embedFont(PDFDocument.Font.Helvetica);
-
-      page.drawText(text, {
-        x: 50,
-        y: height - 200,
-        font,
-        size: 12,
-        color: rgb(0, 0, 0),
-      });
-
-      const newPdfBytes = await pdfDoc.save();
-      return newPdfBytes;
-    } catch (error) {
-      throw new Error(`Error generating new PDF: ${error.message}`);
-    }
-  }
 }
 
 module.exports = { PDF_Generator };

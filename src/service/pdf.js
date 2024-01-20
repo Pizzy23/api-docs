@@ -27,7 +27,6 @@ class PDF_Reader {
       const pdfData = await pdfParse(bytes);
       const pdfText = pdfData.text;
       const pdfClear = pdfText.replace(/\n/g, " ");
-      console.log(pdfClear);
       return pdfClear;
     } catch (error) {
       throw error;

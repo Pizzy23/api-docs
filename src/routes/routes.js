@@ -19,26 +19,27 @@ const serviceGPT = new GPT();
 const serviceGenerate = new PDF_Generator();
 
 router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
-  const uploadedPdfPath = req.file.path;
   try {
+    const uploadedPdfPath = req.file.path;
     const { page } = req.headers;
+    if (page && uploadedPdfPath) {
+      const bytes = await servicePDF.extractPages(uploadedPdfPath, page);
+      const text = await servicePDF.bytesText(bytes);
+      const result = await serviceGPT.gptResume(text);
 
-    const bytes = await servicePDF.extractPages(uploadedPdfPath, page);
-    const text = await servicePDF.bytesText(bytes);
-    const result = await serviceGPT.gptResume(text);
-
-    res.status(200).json({ message: result });
+      res.status(200).json({ message: result });
+    } else {
+      throw new Error("Pdf Invalid");
+    }
   } catch (error) {
-    console.error("Internal error in pdf:", error);
     res.status(500).json({ error: "Internal error in pdf." });
   }
 });
 
 router.post("/diagram", async (req, res) => {
-  try {
+  try { 
     const response = await serviceGPT.sendChatRequest();
   } catch (error) {
-    console.error("Internal error in pdf:", error);
     res.status(500).json({ error: "Internal error in pdf." });
   }
 });
@@ -53,7 +54,6 @@ router.post("/generate", upload.single("pdf"), async (req, res) => {
     );
     res.status(200).json({ message: result });
   } catch (error) {
-    console.error("Internal error in pdf:", error);
     res.status(500).json({ error: "Internal error in pdf." });
   }
 });

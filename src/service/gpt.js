@@ -27,7 +27,8 @@ class GPT {
 
       const res = response.data.choices[0].message.content;
       const cleanedText = res.trim().replace(/^"|"$/g, "");
-      const lines = cleanedText.split("\n");
+      const clearNumber = cleanedText.replace(/\d+\./g, "");
+      const lines = clearNumber.split("\n");
 
       return lines;
     } catch (error) {
