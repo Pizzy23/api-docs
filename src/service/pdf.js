@@ -1,33 +1,54 @@
-const fs = require("fs").promises;
+const fs = require("fs");
+const PDFDocument = require("pdf-lib").PDFDocument;
 const pdfParse = require("pdf-parse");
-const { PDFDocument } = require("pdf-lib");
 
 class PDF_Reader {
   async extractPages(pdfPath, pageNumbersToKeep) {
     try {
       const pageSlices = pageNumbersToKeep.split(",").map(Number);
-      const existingPdfBytes = await fs.readFile(pdfPath);
-      const pdfDoc = await PDFDocument.load(existingPdfBytes);
-      const pages = pdfDoc.getPages();
 
-      for (let i = pages.length - 1; i >= 0; i--) {
-        if (!pageSlices.includes(i + 1)) {
-          pdfDoc.removePage(i);
+      if (pageSlices.length > 3) {
+        throw new Error("Too many pages, the max is 3 Pages.");
+      }
+
+      const documentAsBytes = await fs.promises.readFile(pdfPath);
+
+      const pdfDoc = await PDFDocument.load(documentAsBytes);
+      const pagesItContent = [];
+      const numberOfPages = pdfDoc.getPageCount();
+
+      for (let i = 0; i < numberOfPages; i++) {
+        const subDocument = await PDFDocument.create();
+
+        const copiedPage = await subDocument.copyPages(pdfDoc, [i]);
+        subDocument.addPage(copiedPage[0]);
+
+        const pdfBytes = await subDocument.save();
+        const text = await this.getPageText(pdfBytes);
+        if (pageSlices.includes(i + 1)) {
+          pagesItContent.push(text);
         }
       }
-      const modifiedPdfBytes = await pdfDoc.save();
-
-      return modifiedPdfBytes;
+      return pagesItContent;
     } catch (error) {
-      throw new Error(`Error extracting text: ${error.message}`);
+      throw new Error(`Error splitting PDF: ${error.message}`);
     }
   }
-  async bytesText(bytes) {
+
+  async getPageText(pdfBytes) {
+    const pdfData = await pdfParse(pdfBytes);
+    const pdfText = pdfData.text;
+    const pdfClear = pdfText.replace(/\n/g, " ");
+    return pdfClear;
+  }
+
+  async arrayForText(array) {
     try {
-      const pdfData = await pdfParse(bytes);
-      const pdfText = pdfData.text;
-      const pdfClear = pdfText.replace(/\n/g, " ");
-      return pdfClear;
+      let textNew = "";
+      for (let i = 0; i <= array.length - 1; i++) {
+        textNew += array[i];
+      }
+      return textNew;
     } catch (error) {
       throw error;
     }

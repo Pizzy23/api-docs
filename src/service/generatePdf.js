@@ -28,9 +28,6 @@ class PDF_Generator {
       throw new Error(`Error splitting PDF: ${error.message}`);
     }
   }
-  writePdfBytesToFile(fileName, pdfBytes) {
-    return fs.promises.writeFile(fileName, pdfBytes);
-  }
 
   async getPageText(pdfBytes) {
     const pdfData = await pdfParse(pdfBytes);

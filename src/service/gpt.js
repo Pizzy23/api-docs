@@ -13,7 +13,7 @@ class GPT {
             { role: "system", content: "You are a helpful assistant." },
             {
               role: "user",
-              content: `Give me a summary in 10 parts of 50 words: ${message}`,
+              content: `JUST SUMMARIZE AND DON'T TEACH HOW TO SUMMARIZE, Give me a summary in 10 parts of 50 words: ${message}`,
             },
           ],
         },
@@ -45,7 +45,7 @@ class GPT {
             { role: "system", content: "You are a helpful assistant." },
             {
               role: "user",
-              content: `${message}`,
+              content: `Summarize this in several steps 1, 2, 3, 4... and so on, as you would explain in a flowchart ${message} summary (max 20 steps)`,
             },
           ],
         },

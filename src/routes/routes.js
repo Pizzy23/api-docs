@@ -23,8 +23,8 @@ router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
     const uploadedPdfPath = req.file.path;
     const { page } = req.headers;
     if (page && uploadedPdfPath) {
-      const bytes = await servicePDF.extractPages(uploadedPdfPath, page);
-      const text = await servicePDF.bytesText(bytes);
+      const array = await servicePDF.extractPages(uploadedPdfPath, page);
+      const text = await servicePDF.arrayForText(array);
       const result = await serviceGPT.gptResume(text);
 
       res.status(200).json({ message: result });
