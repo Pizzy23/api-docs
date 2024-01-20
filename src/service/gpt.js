@@ -13,7 +13,7 @@ class GPT {
             { role: "system", content: "You are a helpful assistant." },
             {
               role: "user",
-              content: `Resuma em 10 parte de 50 palavras: ${message}`,
+              content: `Give me a summary in 10 parts of 50 words: ${message}`,
             },
           ],
         },
