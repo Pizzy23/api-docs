@@ -25,9 +25,9 @@ router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
     if (page && uploadedPdfPath) {
       const array = await servicePDF.extractPages(uploadedPdfPath, page);
       const text = await servicePDF.arrayForText(array);
-      const result = await serviceGPT.gptResume(text);
+      const response = await serviceGPT.gptResume(text);
 
-      res.status(200).json({ message: result });
+      res.status(200).json({ message: response });
     } else {
       throw new Error("Pdf Invalid");
     }
@@ -36,9 +36,19 @@ router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
   }
 });
 
-router.post("/diagram", async (req, res) => {
-  try { 
-    const response = await serviceGPT.sendChatRequest();
+router.post("/diagram", upload.single("pdf"), async (req, res) => {
+  try {
+    const uploadedPdfPath = req.file.path;
+    const { page } = req.headers;
+    if (page && uploadedPdfPath) {
+      const array = await servicePDF.extractPages(uploadedPdfPath, page);
+      const text = await servicePDF.arrayForText(array);
+      const response = await serviceGPT.gptDiagram(text);
+
+      res.status(200).json({ message: response });
+    } else {
+      throw new Error("Pdf Invalid");
+    }
   } catch (error) {
     res.status(500).json({ error: "Internal error in pdf." });
   }

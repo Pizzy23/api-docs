@@ -57,7 +57,18 @@ class GPT {
         }
       );
       const res = response.data.choices[0].message.content;
-      return res;
+      const cleanedText = res.trim().replace(/^"|"$/g, "");
+      const clearNumber = cleanedText.replace(/\d+\./g, "");
+      const lines = clearNumber.split("\n");
+      const arrayObj = [];
+      for (let i = 0; i <= lines.length - 1; i++) {
+        arrayObj.push({
+          itemId: i + 1,
+          ItemName: lines[i],
+          blockedBy: i,
+        });
+      }
+      return arrayObj;
     } catch (error) {
       throw new Error("Error sending chat request:", error);
     }
