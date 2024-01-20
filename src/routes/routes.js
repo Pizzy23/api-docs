@@ -3,7 +3,7 @@ const multer = require("multer");
 
 const { PDF_Reader } = require("../service/pdf");
 const { GPT } = require("../service/gpt");
-const { PDF_Generator } = require("../service/generatePdf");
+const { PDF_Search } = require("../service/search");
 
 const router = express.Router();
 const storage = multer.diskStorage({
@@ -16,9 +16,9 @@ const upload = multer({ storage: storage });
 
 const servicePDF = new PDF_Reader();
 const serviceGPT = new GPT();
-const serviceGenerate = new PDF_Generator();
+const serviceSearch = new PDF_Search();
 
-router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
+router.post("/resume-pdf", upload.single("pdf"), async (req, res) => {
   try {
     const uploadedPdfPath = req.file.path;
     const { page } = req.headers;
@@ -54,11 +54,11 @@ router.post("/diagram", upload.single("pdf"), async (req, res) => {
   }
 });
 
-router.post("/generate", upload.single("pdf"), async (req, res) => {
+router.post("/word-search", upload.single("pdf"), async (req, res) => {
   const uploadedPdfPath = req.file.path;
   try {
     const { word } = req.headers;
-    const result = await serviceGenerate.extractPageWithContentWord(
+    const result = await serviceSearch.extractPageWithContentWord(
       uploadedPdfPath,
       word
     );

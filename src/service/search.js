@@ -2,7 +2,7 @@ const fs = require("fs");
 const PDFDocument = require("pdf-lib").PDFDocument;
 const pdfParse = require("pdf-parse");
 
-class PDF_Generator {
+class PDF_Search {
   async extractPageWithContentWord(pdfPath, word) {
     try {
       const documentAsBytes = await fs.promises.readFile(pdfPath);
@@ -37,4 +37,4 @@ class PDF_Generator {
   }
 }
 
-module.exports = { PDF_Generator };
+module.exports = { PDF_Search };
